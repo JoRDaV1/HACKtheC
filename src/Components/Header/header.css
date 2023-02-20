@@ -1,0 +1,29 @@
+@media only screen and (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  button {
+    margin-top: 1rem;
+  }
+
+  img {
+    height: 1.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.linktag:hover {
+  color: azure;
+}
+.linktag {
+  color: #f3ba69;
+
+  text-decoration: none;
+  margin: 0 1rem;
+  transition: color 0.3s ease;
+  font-size: 1.2rem;
+  font-family: "Trirong", serif;
+}
