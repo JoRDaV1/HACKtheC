@@ -5,6 +5,8 @@ import { ContractAddress, abi } from './constants'
 import Card2 from './Card'
 
 function Hackerdash() {
+  const [bounty, setbounty] = useState('5 TFIL')
+
   const [contractid, setcontractid] = useState([])
   const [contractdetails, setcontractdetails] = useState([[]])
   const [loaded, setloaded] = useState('')
@@ -33,6 +35,7 @@ function Hackerdash() {
       console.log(arr)
       //   console.log(contractid)
       setloaded(false)
+      setbounty()
 
       //   contractdetails.forEach((data) => {
       //     console.log(data[0])
@@ -49,10 +52,7 @@ function Hackerdash() {
       ) : (
         <div>
           {contractdetails.map((data) => (
-            <Card2
-              Name={data[0]}
-              id={data[2]}
-            />
+            <Card2 Name={data[0]} id={data[2]} bounty={parseInt(data[4])} />
           ))}
         </div>
       )}

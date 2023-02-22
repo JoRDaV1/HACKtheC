@@ -11,7 +11,7 @@ function App() {
   const [contractdetails, setcontractdetails] = useState([[]])
   const [contractid, setcontractid] = useState([])
 
-  const [load, setLoad] = useState(true)
+  const [load, setLoad] = useState('')
   const [init, setinit] = useState('20000')
 
   const [link, setLink] = useState(
@@ -21,6 +21,8 @@ function App() {
 
   useEffect(() => {
     async function retrieveContracts() {
+      setLoad(true)
+
       setcontractdetails([])
 
       const provider = new ethers.providers.JsonRpcProvider(
@@ -30,6 +32,7 @@ function App() {
       const size = await contract.getArraySize()
       console.log(size)
       let arr = []
+      let arr2 = []
       for (var i = 0; i < size; i++) {
         const contractID = await contract.arrayID(i)
         if (!contractid.includes(contractID)) {
@@ -43,39 +46,24 @@ function App() {
       console.log(arr)
       console.log(id)
 
-      //   console.log(contractid)
+      for (let i = 0; i < arr.length; i++) {
+        if (id === arr[i][2]) {
+          arr2.push(arr[i])
+          console.log('found')
+          setLoad(false)
+        }
+      }
 
-      //   contractdetails.forEach((data) => {
-      //     console.log(data[0])
-      //   })
+      console.log(arr2)
+      setcontractdetail(arr2)
+      setLink('https://ipfs.io/ipfs/' + arr2[0][1])
+      setinit(parseInt(arr[0][3]._hex))
+      setbounty(parseInt(arr[0][4]._hex) + ' TFIL')
+      console.log(link)
     }
 
     retrieveContracts()
   }, [])
-
-  async function setcontract(contractdetails) {
-    for (let i = 0; i < contractdetails.length; i++) {
-      console.log(contractdetails)
-      if (id === contractdetails[i][2]) {
-        setcontractdetail(contractdetails[i])
-        setLoad(false)
-
-        console.log(contractdetail)
-      }
-    }
-  }
-  useEffect(() => {
-    setcontract(contractdetails)
-  })
-
-  // if (!load) {
-  //   contractdetails.map((data) => {
-  //     setinit(parseInt(data[3]._hex))
-  //     setbounty(parseInt(data[4]._hex))
-
-  //     setLink(`https://ipfs.io/ipfs/${data[1]}`)
-  //   })
-  // }
 
   const [hackerAddress, setHackerAdd] = useState('')
 
@@ -183,44 +171,52 @@ function App() {
   }, [])
 
   return (
-    <div className="cdash">
-      <div className="smart-contract-box">
-        <div className="smart-contract-item">
-          <div className="smart-contract-label">Smart Contract Address:</div>
-          <div className="smart-contract-value">{id}</div>
-        </div>
-        <div className="smart-contract-item">
-          <div className="smart-contract-label">Initial Amount:</div>
-          <div className="smart-contract-value">{init}</div>
-        </div>
-        <div className="smart-contract-item">
-          <div className="smart-contract-label">Prize Money:</div>
-          <div className="smart-contract-value">{bounty}</div>
-        </div>
+    <div>
+      {load ? (
+        <div>Please Wait</div>
+      ) : (
+        <div className="cdash">
+          <div className="smart-contract-box">
+            <div className="smart-contract-item">
+              <div className="smart-contract-label">
+                Smart Contract Address:
+              </div>
+              <div className="smart-contract-value">{id}</div>
+            </div>
+            <div className="smart-contract-item">
+              <div className="smart-contract-label">Initial Amount:</div>
+              <div className="smart-contract-value">{init}</div>
+            </div>
+            <div className="smart-contract-item">
+              <div className="smart-contract-label">Prize Money:</div>
+              <div className="smart-contract-value">{bounty}</div>
+            </div>
 
-        {/* <a href={linksmAdd} download="smart-contract.sol">
+            {/* <a href={linksmAdd} download="smart-contract.sol">
             <button className="smart-contract-button">Download Smart Contract</button>
           </a> */}
-      </div>
-      {contractCode && (
-        <div className="smart-contract-code">
-          <pre>{contractCode}</pre>
+          </div>
+          {contractCode && (
+            <div className="smart-contract-code">
+              <pre>{contractCode}</pre>
+            </div>
+          )}
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-box">
+              <input
+                type="text"
+                placeholder="Enter your waallet address here"
+                className="input-field"
+                value={hackerAddress}
+                onChange={handleInputChange}
+              />
+            </div>
+            <button type="submit" className="submit-button" on>
+              Submit
+            </button>
+          </form>
         </div>
       )}
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="input-box">
-          <input
-            type="text"
-            placeholder="Enter your waallet address here"
-            className="input-field"
-            value={hackerAddress}
-            onChange={handleInputChange}
-          />
-        </div>
-        <button type="submit" className="submit-button" on>
-          Submit
-        </button>
-      </form>
     </div>
   )
 }

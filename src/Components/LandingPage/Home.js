@@ -238,7 +238,9 @@ const Home = () => {
                 </Flex>{' '}
               </TabPanel>
               <TabPanel>
-                <Hackerdash />
+                <div className="hackerdash">
+                  <Hackerdash />
+                </div>
               </TabPanel>
             </TabPanels>
           </Tabs>

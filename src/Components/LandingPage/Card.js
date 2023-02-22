@@ -3,7 +3,7 @@ import { Box, Text, Link, Button, Stack } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 
 function Card(props) {
-  const { id, Name, longLine } = props
+  const { id, Name, bounty } = props
   const navigate = useNavigate()
 
   return (
@@ -37,9 +37,7 @@ function Card(props) {
           fontWeight="semibold"
           href="#"
         ></Link>
-        <Text my={2} color="gray.500">
-          Bounty : 5 TFIL
-        </Text>
+        <Text my={2} color="gray.500"></Text>
         <Button
           maxWidth="100px"
           my={2}
