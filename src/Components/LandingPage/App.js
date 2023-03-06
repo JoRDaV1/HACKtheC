@@ -38,7 +38,7 @@ function App() {
 
   async function Bounty(contractID, winner) {
     const provider = new ethers.providers.JsonRpcProvider(
-      "https://api.hyperspace.node.glif.io/rpc/v1"
+      "https://rpc.ankr.com/fantom_testnet"
     );
 
     const signer = new ethers.Wallet(
@@ -98,7 +98,7 @@ function App() {
 
   async function retrieveContracts() {
     const provider = new ethers.providers.JsonRpcProvider(
-      "https://api.hyperspace.node.glif.io/rpc/v1"
+      "https://rpc.ankr.com/fantom_testnet"
     );
     const contract = new ethers.Contract(ContractAddress, abi, provider);
     const size = await contract.getArraySize();
