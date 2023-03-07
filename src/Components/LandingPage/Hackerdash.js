@@ -1,49 +1,49 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-import { ethers } from 'ethers'
-import { ContractAddress, abi } from './constants'
-import Card2 from './Card'
+import React from "react";
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { ContractAddress, abi } from "./constants";
+import Card2 from "./Card";
 
 function Hackerdash() {
-  const [bounty, setbounty] = useState('5 TFIL')
+  const [bounty, setbounty] = useState("5 TFIL");
 
-  const [contractid, setcontractid] = useState([])
-  const [contractdetails, setcontractdetails] = useState([[]])
-  const [loaded, setloaded] = useState('')
+  const [contractid, setcontractid] = useState([]);
+  const [contractdetails, setcontractdetails] = useState([[]]);
+  const [loaded, setloaded] = useState("");
   useEffect(() => {
     async function retrieveContracts() {
-      setcontractdetails([])
-      setloaded(true)
+      setcontractdetails([]);
+      setloaded(true);
 
       const provider = new ethers.providers.JsonRpcProvider(
-        'https://api.hyperspace.node.glif.io/rpc/v1',
-      )
-      const contract = new ethers.Contract(ContractAddress, abi, provider)
-      const size = await contract.getArraySize()
-      console.log(size)
-      let arr = []
+        "https://rpc.ankr.com/fantom_testnet"
+      );
+      const contract = new ethers.Contract(ContractAddress, abi, provider);
+      const size = await contract.getArraySize();
+      console.log(size);
+      let arr = [];
       for (var i = 0; i < size; i++) {
-        const contractID = await contract.arrayID(i)
+        const contractID = await contract.arrayID(i);
         if (!contractid.includes(contractID)) {
-          contractid.push(contractID)
+          contractid.push(contractID);
         }
-        const contractDetails = await contract.getContract(contractID)
-        arr.push(contractDetails)
+        const contractDetails = await contract.getContract(contractID);
+        arr.push(contractDetails);
       }
-      setcontractdetails(arr)
+      setcontractdetails(arr);
 
-      console.log(arr)
+      console.log(arr);
       //   console.log(contractid)
-      setloaded(false)
-      setbounty()
+      setloaded(false);
+      setbounty();
 
       //   contractdetails.forEach((data) => {
       //     console.log(data[0])
       //   })
     }
 
-    retrieveContracts()
-  }, [])
+    retrieveContracts();
+  }, []);
 
   return (
     <div>
@@ -57,7 +57,7 @@ function Hackerdash() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default Hackerdash
+export default Hackerdash;
