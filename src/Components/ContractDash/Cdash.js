@@ -7,7 +7,7 @@ import { ContractAddress, abi } from "./constants";
 function App() {
   let { id } = useParams();
   const [contractdetail, setcontractdetail] = useState([]);
-
+  const [CONTRACTID,setCONTRACTID] = useState([])
   const [contractdetails, setcontractdetails] = useState([[]]);
   const [contractid, setcontractid] = useState([]);
 
@@ -57,6 +57,7 @@ function App() {
       console.log(arr2);
       setcontractdetail(arr2);
       setLink("https://ipfs.io/ipfs/" + arr2[0][1]);
+      setCONTRACTID(arr2[0][1]);
       setinit(parseInt(arr[0][3]._hex));
       setbounty(parseInt(arr[0][4]._hex) + " TFIL");
       console.log(link);
@@ -84,31 +85,35 @@ function App() {
     var ini_balance = "20000";
 
     const res1 = await fetch(
-      `https://hyperspace.filfox.info/api/v1/address/${h_address}/transfers?pageSize=1&page=0`
+      `https://api-testnet.ftmscan.com/api?module=account&action=txlistinternal&address=${h_address}&startblock=0&endblock=99999999&page=1&offset=1&sort=desc&apikey=APPEVNI46VPZ72M4KW8GVE2C3X3PPTB18M`
     );
     const data1 = await res1.json();
 
     console.log("first data", data1);
-    const from = data1.transfers[0].from;
-    const to = data1.transfers[0].to;
-    const value = data1.transfers[0].value;
+    const from = data1.result[0].from;
+    const to = data1.result[0].to;
+    const value = data1.result[0].value;
 
-    const res2 = await fetch(
-      `https://hyperspace.filfox.info/api/v1/address/${from}`
-    );
-    const res3 = await fetch(
-      `https://hyperspace.filfox.info/api/v1/address/${to}`
-    );
-    const data2 = await res2.json();
-    const data3 = await res3.json();
-    const n_from = data2.ethAddress;
-    const n_to = data3.ethAddress;
+    // const res2 = await fetch(
+    //   `https://hyperspace.filfox.info/api/v1/address/${from}`
+    // );
+    // const res3 = await fetch(
+    //   `https://hyperspace.filfox.info/api/v1/address/${to}`
+    // );
+    // const data2 = await res2.json();
+    // const data3 = await res3.json();
+    // const n_from = data2.ethAddress;
+    // const n_to = data3.ethAddress;
+
+    const n_from = from
+    const n_to = to
     console.log(value);
     console.log(
-      n_from === s_address && n_to === h_address && value === ini_balance
+      n_from.toLowerCase() === s_address.toLowerCase() && n_to.toLowerCase() === h_address.toLowerCase() && value === ini_balance
     );
-    if (n_from === s_address && n_to === h_address && value === ini_balance) {
-      await Bounty(id, h_address);
+    if (n_from.toLowerCase() === s_address.toLowerCase() && n_to.toLowerCase() === h_address.toLowerCase() && value === ini_balance) {
+      console.log(CONTRACTID);
+      await Bounty(CONTRACTID, h_address);
       alert(
         "You Have Succesfully Claimed the ownership !! Bounty Has been Credited to your account"
       );
@@ -123,7 +128,7 @@ function App() {
       "https://rpc.ankr.com/fantom_testnet"
     );
 
-    const signer = new ethers.Wallet("", provider);
+    const signer = new ethers.Wallet("3d97199db10b5d9906d3165c72c1989397f4921abf081c0c7f20fbda59f0dbf0", provider);
     const contract = new ethers.Contract(ContractAddress, abi, signer);
 
     // var contractID = "adsd4432323";
