@@ -143,7 +143,7 @@ function App() {
     )
 
     const signer = new ethers.Wallet(
-      '3d97199db10b5d9906d3165c72c1989397f4921abf081c0c7f20fbda59f0dbf0',
+      'your_private_key',
       provider,
     )
     const contract = new ethers.Contract(ContractAddress, abi, signer)
