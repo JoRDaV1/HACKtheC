@@ -4,9 +4,12 @@ import './Home.css'
 import { Web3Storage } from 'web3.storage'
 import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
+import { ContractAddress2, abi2 } from './constants2'
 import { ContractAddress, abi } from './constants'
+
 import { Spinner } from '@chakra-ui/react'
 import Hackerdash from './Hackerdash'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Tabs,
@@ -14,31 +17,17 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Divider,
   Button,
-  ButtonGroup,
-  BsThreeDotsVertical,
   FormControl,
   FormLabel,
   Input,
-  IconButton,
-  Container,
-  SimpleGrid,
   Flex,
   Box,
-  BiLike,
-} from '@chakra-ui/react'
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  Stack,
-  CardHeader,
-  Heading,
   Text,
 } from '@chakra-ui/react'
 
 const Home = () => {
+  const navigate = useNavigate()
   const apiToken =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDJhRDQzQWRGOTQwODE4YzY4MjZmQmEzNUUwMjFFNTdCRDAxQThEN0EiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzY3NDgyMDAzNTUsIm5hbWUiOiJIYWNrZXgifQ.bAnq4DgU5OhwADCPQ0WJn97uD5YqdnMWusvSXCOC0Ak'
 
@@ -46,6 +35,7 @@ const Home = () => {
 
   const [Name, setName] = useState('')
   const [Upload, setUpload] = useState('')
+  const [addressvar, setaddressvar] = useState(false)
 
   const [bounty, setBounty] = useState('')
 
@@ -55,32 +45,15 @@ const Home = () => {
   const [balance, setintialbalance] = useState('')
 
   const [metamask, setmetamask] = useState(false)
+  const [metamask2, setmetamask2] = useState(false)
 
   const [spinner, setspinner] = useState(false)
-
-  const dataList = [
-    {
-      id: '1',
-      product: 'Product 1',
-      summary: 'This is a summary, can be any length',
-      longLine: '100$',
-    },
-    {
-      id: '2',
-      product: 'Product Two',
-      summary:
-        'Another summary, make sure that this is very responsivesfafsdfsdfsdfsdfsfsfsdf',
-      longLine: '250$',
-    },
-    {
-      id: '3',
-      product: 'Long Product',
-      summary: 'Finalize them summary, hurry, we are close to deadline',
-      longLine: '50$',
-    },
-  ]
+  const [spinner2, setspinner2] = useState(true)
+  const [address, setaddress] = useState('')
 
   const handleUpload = async (event) => {
+    setspinner2(false)
+
     const fdata = event.target.files[0]
 
     console.log('before getting', fdata)
@@ -97,19 +70,51 @@ const Home = () => {
     const files = await res.files()
     settransid(files[0].cid)
     console.log(`https://ipfs.io/ipfs/${files[0].cid}`)
+    setspinner2(true)
+  }
+
+  async function addSmartContract(Name, Transid, contractAddress) {
+    //add contract during registration
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+
+    const contract = new ethers.Contract(ContractAddress2, abi2, signer)
+
+    console.log(contract)
+
+    try {
+      const transactionResponse = await contract.registration(
+        Name,
+        Transid,
+        contractAddress,
+        { value: ethers.utils.parseEther('1') },
+      )
+      await listenForTransactionMine(transactionResponse, provider)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   async function registerform(e) {
     e.preventDefault()
     setspinner(true)
     console.log(Name, Transid, contractAddress, bounty)
-    await register(Name, Transid, contractAddress, balance, bounty)
+    await addSmartContract(Name, Transid, contractAddress)
+    // await register(Name, Transid, contractAddress, balance, bounty)
   }
   async function connect() {
+    setmetamask(false)
+
     if (typeof window.ethereum !== 'undefined') {
       console.log('metamask')
       await window.ethereum.request({ method: 'eth_requestAccounts' })
       setmetamask(true)
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      console.log(await signer.getAddress())
+      setaddress(await signer.getAddress())
+      setaddressvar(true)
     } else alert('Install metamask')
   }
 
@@ -123,7 +128,7 @@ const Home = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
 
-    const contract = new ethers.Contract(ContractAddress, abi, signer)
+    const contract = new ethers.Contract(ContractAddress2, abi2, signer)
 
     console.log(contract)
 
@@ -176,62 +181,104 @@ const Home = () => {
                       {spinner ? (
                         <Spinner />
                       ) : (
-                        <form onSubmit={registerform}>
-                          {metamask ? (
-                            <FormLabel>
-                              {' '}
-                              Connected With Metamask Succesfully
-                            </FormLabel>
-                          ) : (
-                            <Button onClick={connect}>
-                              Connect With Metamask &nbsp; {'   '}
-                              <iconify-icon icon="logos:metamask-icon"></iconify-icon>
-                            </Button>
-                          )}{' '}
-                          <FormControl mt={6}>
-                            <FormLabel>Name </FormLabel>
-                            <Input
-                              placeholder=""
-                              onChange={(e) => setName(e.target.value)}
-                            />
-                          </FormControl>
-                          <FormControl>
-                            <FormLabel>Smart Contract Address</FormLabel>
-                            <Input
-                              placeholder=""
-                              onChange={(e) =>
-                                setContractaddress(e.target.value)
-                              }
-                            />
-                          </FormControl>
-                          <FormControl mt={6}>
-                            <FormLabel>Bounty</FormLabel>
-                            <Input
-                              onChange={(e) => setBounty(e.target.value)}
-                              placeholder="TFIL"
-                            />
-                          </FormControl>
-                          <FormControl mt={6}>
-                            <FormLabel>Intial Balance</FormLabel>
-                            <Input
-                              onChange={(e) => setintialbalance(e.target.value)}
-                              placeholder="wei"
-                            />
-                          </FormControl>
-                          <FormControl mt={6}>
-                            <FormLabel>Smart Contract</FormLabel>
-                            <Input
-                              onChange={handleUpload}
-                              type="file"
-                              id="input"
-                              name="file"
-                              placeholder="please upload .sol file"
-                            />
-                          </FormControl>
-                          <Button width="full" mt={4} type="submit">
-                            Upload
-                          </Button>
-                        </form>
+                        <>
+                          <form onSubmit={registerform}>
+                            {metamask ? (
+                              <>
+                                <Text
+                                  fontSize="xl"
+                                  style={{ textAlign: 'center' }}
+                                >
+                                  Connected With Metamsk Succesfully{' '}
+                                </Text>
+                                {addressvar ? (
+                                  <>
+                                    {' '}
+                                    <Button
+                                      colorScheme="
+                            yellow"
+                                      variant="outline"
+                                      onClick={navigate(
+                                        `/companydash/${address}`,
+                                      )}
+                                    >
+                                      Click to see your Dashboard
+                                    </Button>{' '}
+                                  </>
+                                ) : (
+                                  <> </>
+                                )}
+                              </>
+                            ) : (
+                              <Button onClick={connect} className="metamask">
+                                Connect With Metamask &nbsp; {'   '}
+                                <iconify-icon icon="logos:metamask-icon"></iconify-icon>
+                              </Button>
+                            )}{' '}
+                            <br />
+                            <br />
+                            <hr />
+                            <br />
+                            <Text fontSize="xl" style={{ textAlign: 'center' }}>
+                              Submit your Contract
+                            </Text>
+                            <FormControl mt={6}>
+                              <FormLabel>Name </FormLabel>
+                              <Input
+                                placeholder=""
+                                onChange={(e) => setName(e.target.value)}
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel>Smart Contract Address</FormLabel>
+                              <Input
+                                placeholder=""
+                                onChange={(e) =>
+                                  setContractaddress(e.target.value)
+                                }
+                              />
+                            </FormControl>
+                            <FormControl mt={6}>
+                              <FormLabel>Bounty</FormLabel>
+                              <Input
+                                onChange={(e) => setBounty(e.target.value)}
+                                placeholder="FTM"
+                              />
+                            </FormControl>
+                            <FormControl mt={6}>
+                              <FormLabel>Intial Balance (Optional)</FormLabel>
+                              <Input
+                                onChange={(e) =>
+                                  setintialbalance(e.target.value)
+                                }
+                                placeholder="wei"
+                              />
+                            </FormControl>
+                            <FormControl mt={6}>
+                              <FormLabel>Smart Contract</FormLabel>
+                              <Input
+                                onChange={handleUpload}
+                                type="file"
+                                id="input"
+                                name="file"
+                                placeholder="please upload .sol file"
+                              />
+                            </FormControl>
+                            {spinner2 ? (
+                              <>
+                                {' '}
+                                <Button width="full" mt={4} type="submit">
+                                  Submit
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                {' '}
+                                <FormLabel>Uploading in Ipfs .... </FormLabel>
+                              </>
+                            )}
+                          </form>
+                        </>
                       )}
                     </Box>
                   </Box>
