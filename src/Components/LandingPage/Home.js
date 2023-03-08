@@ -10,6 +10,7 @@ import { ContractAddress, abi } from './constants'
 import { Spinner } from '@chakra-ui/react'
 import Hackerdash from './Hackerdash'
 import { useNavigate } from 'react-router-dom'
+import Button2 from './Button'
 
 import {
   Tabs,
@@ -100,12 +101,15 @@ const Home = () => {
     e.preventDefault()
     setspinner(true)
     console.log(Name, Transid, contractAddress, bounty)
+    await register(Name, Transid, contractAddress, balance, bounty)
+  }
+  async function registerform2(e) {
+    e.preventDefault()
+    setspinner(true)
+    console.log(Name, Transid, contractAddress, bounty)
     await addSmartContract(Name, Transid, contractAddress)
-    // await register(Name, Transid, contractAddress, balance, bounty)
   }
   async function connect() {
-    setmetamask(false)
-
     if (typeof window.ethereum !== 'undefined') {
       console.log('metamask')
       await window.ethereum.request({ method: 'eth_requestAccounts' })
@@ -128,7 +132,7 @@ const Home = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
 
-    const contract = new ethers.Contract(ContractAddress2, abi2, signer)
+    const contract = new ethers.Contract(ContractAddress, abi, signer)
 
     console.log(contract)
 
@@ -177,110 +181,225 @@ const Home = () => {
                     <Box textAlign="center">
                       <FormLabel> {Upload}</FormLabel>
                     </Box>
-                    <Box my={4} textAlign="left">
-                      {spinner ? (
-                        <Spinner />
-                      ) : (
-                        <>
-                          <form onSubmit={registerform}>
-                            {metamask ? (
+
+                    <Tabs
+                      variant="soft-rounded"
+                      colorScheme="green"
+                      isFittedvariant="enclosed"
+                    >
+                      <TabList>
+                        <Tab>Only Fund </Tab>
+                        <Tab>Fund or Data</Tab>
+                      </TabList>
+                      <TabPanels>
+                        <TabPanel>
+                          <Box my={4} textAlign="left">
+                            {spinner ? (
+                              <Spinner />
+                            ) : (
                               <>
-                                <Text
-                                  fontSize="xl"
-                                  style={{ textAlign: 'center' }}
-                                >
-                                  Connected With Metamsk Succesfully{' '}
-                                </Text>
-                                {addressvar ? (
-                                  <>
-                                    {' '}
-                                    <Button
-                                      colorScheme="
-                            yellow"
-                                      variant="outline"
-                                      onClick={navigate(
-                                        `/companydash/${address}`,
+                                <form onSubmit={registerform}>
+                                  {metamask ? (
+                                    <>
+                                      <Text
+                                        fontSize="xl"
+                                        style={{ textAlign: 'center' }}
+                                      >
+                                        Connected With Metamsk Succesfully{' '}
+                                      </Text>
+                                      <br />
+                                      {addressvar ? (
+                                        <>
+                                          {' '}
+                                          <button
+                                            className="btn btn-primary"
+                                            type="submit"
+                                            onClick={() =>
+                                              navigate(
+                                                `/companydash/${address}`,
+                                              )
+                                            }
+                                          >
+                                            <i className="fa fa-home"></i>
+                                            Click to see your Dashboard
+                                          </button>
+                                        </>
+                                      ) : (
+                                        <></>
                                       )}
+                                    </>
+                                  ) : (
+                                    <Button
+                                      onClick={connect}
+                                      className="metamask"
                                     >
-                                      Click to see your Dashboard
-                                    </Button>{' '}
-                                  </>
-                                ) : (
-                                  <> </>
-                                )}
-                              </>
-                            ) : (
-                              <Button onClick={connect} className="metamask">
-                                Connect With Metamask &nbsp; {'   '}
-                                <iconify-icon icon="logos:metamask-icon"></iconify-icon>
-                              </Button>
-                            )}{' '}
-                            <br />
-                            <br />
-                            <hr />
-                            <br />
-                            <Text fontSize="xl" style={{ textAlign: 'center' }}>
-                              Submit your Contract
-                            </Text>
-                            <FormControl mt={6}>
-                              <FormLabel>Name </FormLabel>
-                              <Input
-                                placeholder=""
-                                onChange={(e) => setName(e.target.value)}
-                              />
-                            </FormControl>
-                            <FormControl>
-                              <FormLabel>Smart Contract Address</FormLabel>
-                              <Input
-                                placeholder=""
-                                onChange={(e) =>
-                                  setContractaddress(e.target.value)
-                                }
-                              />
-                            </FormControl>
-                            <FormControl mt={6}>
-                              <FormLabel>Bounty</FormLabel>
-                              <Input
-                                onChange={(e) => setBounty(e.target.value)}
-                                placeholder="FTM"
-                              />
-                            </FormControl>
-                            <FormControl mt={6}>
-                              <FormLabel>Intial Balance (Optional)</FormLabel>
-                              <Input
-                                onChange={(e) =>
-                                  setintialbalance(e.target.value)
-                                }
-                                placeholder="wei"
-                              />
-                            </FormControl>
-                            <FormControl mt={6}>
-                              <FormLabel>Smart Contract</FormLabel>
-                              <Input
-                                onChange={handleUpload}
-                                type="file"
-                                id="input"
-                                name="file"
-                                placeholder="please upload .sol file"
-                              />
-                            </FormControl>
-                            {spinner2 ? (
-                              <>
-                                {' '}
-                                <Button width="full" mt={4} type="submit">
-                                  Submit
-                                </Button>
-                              </>
-                            ) : (
-                              <>
-                                {' '}
-                                <FormLabel>Uploading in Ipfs .... </FormLabel>
+                                      Connect With Metamask &nbsp; {'   '}
+                                      <iconify-icon icon="logos:metamask-icon"></iconify-icon>
+                                    </Button>
+                                  )}{' '}
+                                  <br />
+                                  <br />
+                                  <hr />
+                                  <br />
+                                  <Text
+                                    fontSize="xl"
+                                    style={{ textAlign: 'center' }}
+                                  >
+                                    Submit your Contract
+                                  </Text>
+                                  <FormControl mt={6}>
+                                    <FormLabel>Name </FormLabel>
+                                    <Input
+                                      placeholder=""
+                                      onChange={(e) => setName(e.target.value)}
+                                    />
+                                  </FormControl>
+                                  <FormControl>
+                                    <FormLabel>
+                                      Smart Contract Address
+                                    </FormLabel>
+                                    <Input
+                                      placeholder=""
+                                      onChange={(e) =>
+                                        setContractaddress(e.target.value)
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormControl mt={6}>
+                                    <FormLabel>Bounty</FormLabel>
+                                    <Input
+                                      onChange={(e) =>
+                                        setBounty(e.target.value)
+                                      }
+                                      placeholder="FTM"
+                                    />
+                                  </FormControl>
+                                  <FormControl mt={6}>
+                                    <FormLabel>
+                                      Intial Balance (Optional)
+                                    </FormLabel>
+                                    <Input
+                                      onChange={(e) =>
+                                        setintialbalance(e.target.value)
+                                      }
+                                      placeholder="wei"
+                                    />
+                                  </FormControl>
+                                  <FormControl mt={6}>
+                                    <FormLabel>Smart Contract</FormLabel>
+                                    <Input
+                                      onChange={handleUpload}
+                                      type="file"
+                                      id="input"
+                                      name="file"
+                                      placeholder="please upload .sol file"
+                                    />
+                                  </FormControl>
+                                  {spinner2 ? (
+                                    <>
+                                      {' '}
+                                      <Button width="full" mt={4} type="submit">
+                                        Submit
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      {' '}
+                                      <FormLabel>
+                                        Uploading in Ipfs ....{' '}
+                                      </FormLabel>
+                                    </>
+                                  )}
+                                </form>
                               </>
                             )}
-                          </form>
-                        </>
-                      )}
-                    </Box>
+                          </Box>
+                        </TabPanel>
+                        <TabPanel>
+                          <Box my={4} textAlign="left">
+                            {spinner ? (
+                              <Spinner />
+                            ) : (
+                              <>
+                                <form onSubmit={registerform2}>
+                                  {metamask ? (
+                                    <>
+                                      <Text
+                                        fontSize="xl"
+                                        style={{ textAlign: 'center' }}
+                                      >
+                                        Connected With Metamsk Succesfully{' '}
+                                      </Text>
+                                    </>
+                                  ) : (
+                                    <Button
+                                      onClick={connect}
+                                      className="metamask"
+                                    >
+                                      Connect With Metamask &nbsp; {'   '}
+                                      <iconify-icon icon="logos:metamask-icon"></iconify-icon>
+                                    </Button>
+                                  )}{' '}
+                                  <br />
+                                  <br />
+                                  <hr />
+                                  <br />
+                                  <Text
+                                    fontSize="xl"
+                                    style={{ textAlign: 'center' }}
+                                  >
+                                    Submit your Contract
+                                  </Text>
+                                  <FormControl mt={6}>
+                                    <FormLabel>Name </FormLabel>
+                                    <Input
+                                      placeholder=""
+                                      onChange={(e) => setName(e.target.value)}
+                                    />
+                                  </FormControl>
+                                  <FormControl>
+                                    <FormLabel>
+                                      Smart Contract Address
+                                    </FormLabel>
+                                    <Input
+                                      placeholder=""
+                                      onChange={(e) =>
+                                        setContractaddress(e.target.value)
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormControl mt={6}>
+                                    <FormLabel>Smart Contract</FormLabel>
+                                    <Input
+                                      onChange={handleUpload}
+                                      type="file"
+                                      id="input"
+                                      name="file"
+                                      placeholder="please upload .sol file"
+                                    />
+                                  </FormControl>
+                                  {spinner2 ? (
+                                    <>
+                                      {' '}
+                                      <Button width="full" mt={4} type="submit">
+                                        Submit
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      {' '}
+                                      <FormLabel>
+                                        Uploading in Ipfs ....{' '}
+                                      </FormLabel>
+                                    </>
+                                  )}
+                                </form>
+                              </>
+                            )}
+                          </Box>
+                        </TabPanel>
+                      </TabPanels>
+                    </Tabs>
                   </Box>
                 </Flex>{' '}
               </TabPanel>

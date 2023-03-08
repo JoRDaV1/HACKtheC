@@ -13,6 +13,8 @@ function Dashboard() {
   const navigate = useNavigate()
   let { id } = useParams()
 
+  const [contractid, setcontractid] = useState([])
+
   useEffect(() => {
     async function getContractIds(id) {
       // get array of contractids of contracts of companies by passing company address.
@@ -27,6 +29,7 @@ function Dashboard() {
       try {
         const transactionResponse = await contract.getContractIds(id)
         console.log(transactionResponse)
+        setcontractid(transactionResponse)
       } catch (error) {
         console.log(error)
       }
@@ -47,13 +50,18 @@ function Dashboard() {
           <hr />
         </div>
       </div>
-      <div className="row">
-        <div className="col-lg-4 col-md-6 col-sm-12">
-          <div className="box">
-            <h3>Box 3</h3>
-            <p>Description of Box 3</p>
+      <div>
+        {contractid?.map((id) => (
+          <div className="row">
+            <div className="col-lg-8 col-md-6 col-sm-12">
+              <div className="box">
+                <h3>{id}</h3>
+                <p>View Your POCs Here</p>
+                <Button onClick={() => navigate(`/pocdash/id`)}> View </Button>
+              </div>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   )
