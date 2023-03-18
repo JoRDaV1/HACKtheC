@@ -6,6 +6,8 @@
 
 The impact of blockchain technology on the world is widely acknowledged. Applications built on blockchain rely heavily on smart contracts, which contain vast amounts of valuable information and funds. If a hacker were to find a way to extract private data or funds from these contracts, it could have severe consequences. To address this issue, there is a need for a platform where organizations can upload their smart contracts and hackers can search for bugs in exchange for rewards.
 
+This Project is mainly about hacking the contracts and claiming its ownership. our project mainly has 2 entities one is a company and other is a hacker. The company challenges the hackers by uploading their contract and some initial balance and some bounty in our application which we save their smart contract file in IPFS and we will store the mapping of the IPFS link with the company details in the smart contract. So whenever a hacker tries to make balance of smart contract zero we will ask to submit his wallet address address and we will verify the latest transaction of the smart contract and transfer the bounty if it is valid
+
 # Project
 
 # Overview
