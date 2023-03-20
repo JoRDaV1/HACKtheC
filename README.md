@@ -10,15 +10,15 @@ This Project is mainly about hacking the contracts and claiming its ownership. o
 
 # Project
 
-# Overview
+## Overview
 
 ##### Members: 
 
 ```
 Divanshu Prajapat
 Kanakam Venkatam Vishnu Swaroop
-Jay Patel
 Rajat Singh
+Jay Patel
 ```
 ### What it does
 
